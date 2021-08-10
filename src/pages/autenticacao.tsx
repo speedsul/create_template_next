@@ -1,15 +1,27 @@
 import { useState } from 'react';
-import { IconeGoogle } from '../components/icons';
+import { IconeAtencao, IconeGoogle } from '../components/icons';
+import useAuth from '../data/hook/UseAuth';
 import AuthInput from './../components/auth/AuthInput';
 export default function Autenticacao() {
+    const [erro, setErro] = useState('');
     const [modo, setModo] = useState<'login' | 'cadastro'>('login');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const {usuario, loginGoogle} = useAuth();
+
+    function exibirErro(msg: string, tempo: number = 3) {
+        setErro(msg);
+        setTimeout(() => {
+            setErro('');
+        }, tempo * 1000);
+    }
 
     function submeter() {
         if (modo === 'login') {
+            exibirErro('Ocorreu um erro no cadastro', 5);
             console.log('login');
         } else {
+            exibirErro('Ocorreu um erro no login', 5);
             console.log('Cadastre-se');
         }
     }
@@ -26,6 +38,14 @@ export default function Autenticacao() {
                 <h1 className="text-xl font-bold mb-5 text-center uppercase">
                     {modo === 'login' ? 'Entre com seu login' : 'Cadastre na Plataforma'}
                 </h1>
+                {erro ? (
+                    <div className="flex flex-col items-center justify-center bg-red-600 text-white p-1 rounded-lg border-2 border-red-900 text-center font-bold">
+                        {IconeAtencao()}
+                        <span className="">{erro}</span>
+                    </div>
+                ) : (
+                    false
+                )}
                 <AuthInput
                     label="Email"
                     obrigatorio
@@ -48,7 +68,7 @@ export default function Autenticacao() {
                 <hr className="my-6 border-gray-300 w-full" />
 
                 <button
-                    onClick={submeter}
+                    onClick={loginGoogle}
                     className=" flex items-center justify-center w-full bg-red-500 hover:bg-red-400 text-white rounded-lg px-4 py-3">
                     <span className="flex w-8 h-8 mr-10 bg-white items-center content-center rounded-full">
                         {IconeGoogle}
@@ -61,7 +81,12 @@ export default function Autenticacao() {
                     </p>
                 ) : (
                     <p className="cursor-pointer pt-5 text-blue-500 font-semibold">
-                        <a onClick={() => setModo('login')}>Logar</a>
+                        <a
+                            onClick={() => {
+                                setModo('login');
+                            }}>
+                            Logar
+                        </a>
                     </p>
                 )}
             </div>
