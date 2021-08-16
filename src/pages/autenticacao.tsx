@@ -7,7 +7,7 @@ export default function Autenticacao() {
     const [modo, setModo] = useState<'login' | 'cadastro'>('login');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
-    const {usuario, loginGoogle} = useAuth();
+    const {loginGoogle,login, cadastrarUsuario} = useAuth();
 
     function exibirErro(msg: string, tempo: number = 3) {
         setErro(msg);
@@ -16,14 +16,16 @@ export default function Autenticacao() {
         }, tempo * 1000);
     }
 
-    function submeter() {
+    async function submeter() {
+      try{
         if (modo === 'login') {
-            exibirErro('Ocorreu um erro no cadastro', 5);
-            console.log('login');
+           await login(email, senha)
         } else {
-            exibirErro('Ocorreu um erro no login', 5);
-            console.log('Cadastre-se');
+           await cadastrarUsuario(email, senha)
         }
+      }catch(e){
+        exibirErro(e.message)
+      }
     }
     return (
         <div className="flex h-screen justify-center items-center">
